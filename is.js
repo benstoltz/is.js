@@ -1,4 +1,4 @@
-// is.js 0.5.1
+// is.js 0.7.3
 // Author: Aras Atasaygin
 
 // AMD with global, Node, or global
@@ -20,17 +20,17 @@
         // Browser globals (root is window)
         root.is = factory(root.is);
     }
-}(this, function(is) {
+} (this, function(is) {
 
     // Baseline
     /* -------------------------------------------------------------------------- */
 
-    var root = this;
+    var root = this || global;
     var previousIs = root.is;
 
     // define 'is' object and current version
     is = {};
-    is.VERSION = '0.5.1';
+    is.VERSION = '0.7.3';
 
     // define interfaces
     is.not = {};
@@ -130,13 +130,18 @@
 
     // is a given value number?
     is.number = function(value) {
-        return toString.call(value) === '[object Number]';
+        return is.not.nan(value) && toString.call(value) === '[object Number]';
     };
 
     // is a given value object?
     is.object = function(value) {
         var type = typeof value;
         return type === 'function' || type === 'object' && !!value;
+    };
+
+    // is given value a pure JSON object?
+    is.json = function(value) {
+        return toString.call(value) === '[object Object]';
     };
 
     // is a given value RegExp?
@@ -338,7 +343,7 @@
     /* -------------------------------------------------------------------------- */
 
     // is a given string include parameter substring?
-    is.include = String.prototype.includes || function(str, substr) {
+    is.include = function(str, substr) {
         return str.indexOf(substr) > -1;
     };
     // include method does not support 'all' and 'any' interfaces
@@ -363,7 +368,7 @@
 
     // is string end with a given endWith parameter?
     is.endWith = function(str, endWith) {
-        return is.string(str) && str.indexOf(endWith) === str.length -  endWith.length;
+        return is.string(str) && str.indexOf(endWith) > -1 && str.indexOf(endWith) === str.length -  endWith.length;
     };
     // endWith method does not support 'all' and 'any' interfaces
     is.endWith.api = ['not'];
@@ -556,7 +561,8 @@
 
         // is current browser opera?
         is.opera = function() {
-            return /opr/i.test(userAgent);
+            return /^Opera\//.test(userAgent) || // Opera 12 and older versions
+                /\x20OPR\//.test(userAgent); // Opera 15+
         };
         // opera method does not support 'all' and 'any' interfaces
         is.opera.api = ['not'];
@@ -619,7 +625,7 @@
 
         // is current device blackberry?
         is.blackberry = function() {
-            return /blackberry/i.test(userAgent);
+            return /blackberry/i.test(userAgent) || /BB10/i.test(userAgent);
         };
         // blackberry method does not support 'all' and 'any' interfaces
         is.blackberry.api = ['not'];
@@ -691,6 +697,13 @@
         is.offline = not(is.online);
         // offline method does not support 'all' and 'any' interfaces
         is.offline.api = ['not'];
+
+        // is current device supports touch?
+        is.touchDevice = function() {
+            return 'ontouchstart' in window ||'DocumentTouch' in window && document instanceof DocumentTouch;
+        };
+        // touchDevice method does not support 'all' and 'any' interfaces
+        is.touchDevice.api = ['not'];
     }
 
     // Object checks

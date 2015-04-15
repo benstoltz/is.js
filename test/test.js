@@ -1,4 +1,5 @@
-var expect = chai.expect;
+
+var expect = (typeof chai != 'undefined') ? chai.expect : require('chai').expect;
 
 describe("type checks", function() {
     describe("is.arguments", function() {
@@ -367,6 +368,9 @@ describe("type checks", function() {
             var notNumber = 'test';
             expect(is.number(notNumber)).to.be.false;
         });
+        it("should return false if passed parameter is NaN", function() {
+            expect(is.number(NaN)).to.be.false;
+        })
     });
     describe("is.not.number", function() {
         it("should return false if passed parameter type is number", function() {
@@ -376,6 +380,9 @@ describe("type checks", function() {
             var notNumber = 'test';
             expect(is.not.number(notNumber)).to.be.true;
         });
+        it("should return true if passed parameter is NaN", function() {
+            expect(is.not.number(NaN)).to.be.true;
+        })
     });
     describe("is.all.number", function() {
         it("should return true if all passed parameter types are number", function() {
@@ -435,6 +442,45 @@ describe("type checks", function() {
         it("should return false if all passed parameter types are not object", function() {
             expect(is.any.object(1, 2, 3)).to.be.false;
             expect(is.any.object([1, 2, 3])).to.be.false;
+        });
+    });
+    describe("is.json",function(){
+        it("should return true if passed parameter type is a json object", function() {
+            expect(is.json({})).to.be.true;
+        });
+        it("should return false if passed parameter type is not a json object", function() {
+            var notObject = 'test';
+            expect(is.json(notObject)).to.be.false;
+        });
+    });
+     describe("is.not.json", function() {
+        it("should return false if passed parameter type is json object", function() {
+            expect(is.not.json({})).to.be.false;
+        });
+        it("should return true if passed parameter type is not json object", function() {
+            var notObject = 'test';
+            expect(is.not.json(notObject)).to.be.true;
+        });
+    });
+    describe("is.all.json", function() {
+        it("should return true if all passed parameter types are object", function() {
+            expect(is.all.json({}, {})).to.be.true;
+            expect(is.all.json([{}, {}])).to.be.true;
+        });
+        it("should return false if any passed parameter type is not object", function() {
+            var notObject = 'test';
+            expect(is.all.json({}, notObject,[])).to.be.false;
+            expect(is.all.json([{}, notObject,""])).to.be.false;
+        });
+    });
+    describe("is.any.json", function() {
+        it("should return true if any passed parameter type is json object", function() {
+            expect(is.any.json({}, {}, 'test')).to.be.true;
+            expect(is.any.json([{}, {}, 'test'])).to.be.true;
+        });
+        it("should return false if all passed parameter types are not json object", function() {
+            expect(is.any.json(1, 2, 3)).to.be.false;
+            expect(is.any.json([1, 2, 3])).to.be.false;
         });
     });
     describe("is.regexp", function() {
@@ -1902,6 +1948,9 @@ describe("string checks", function() {
         });
         it("should return false if given string does not end with substring", function() {
             expect(is.endWith('test', 'te')).to.be.false;
+        });
+        it("should prevent true return if endWith is not present in the string", function() {
+            expect(is.endWith('id', '_id')).to.be.false;
         });
     });
     describe("is.not.endWith", function() {

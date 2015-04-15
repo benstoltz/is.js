@@ -4,6 +4,33 @@ is.js
 - No dependencies
 - AMD, Node & browser ready
 
+####Usage:
+
+Node.js:
+```
+npm install is_js
+```
+
+Bower:
+```
+bower install is_js
+```
+
+Build:
+```
+grunt build
+```
+
+Test:
+```
+grunt test
+```
+
+####Contributing:
+Thanks for considering to contribute. Check [here](CONTRIBUTING.md)
+
+####Contributors:
+Many thanks to our contributors: https://github.com/arasatasaygin/is.js/graphs/contributors
 
 Type checks
 ===========
@@ -206,6 +233,9 @@ interfaces: not, all, any
 is.number(42);
 => true
 
+is.number(NaN);
+=> false
+
 is.not.number('42');
 => true
 
@@ -229,7 +259,7 @@ interfaces: not, all, any
 is.object({foo: 'bar'});
 => true
 
-// functions are also returnin as true
+// functions are also returning as true
 is.object(toString);
 => true
 
@@ -244,6 +274,33 @@ is.any.object({}, 2);
 
 // 'all' and 'any' interfaces can also take array parameter
 is.all.object([{}, new Object()]);
+=> true
+```
+
+is.json(value:any)
+--------------------
+####Checks if the given value type is pure json object.
+interfaces: not, all, any
+
+```javascript
+is.json({foo: 'bar'});
+=> true
+
+// functions are returning as false
+is.json(toString);
+=> false
+
+is.not.json([]);
+=> true
+
+is.all.json({}, 1);
+=> false
+
+is.any.json({}, 2);
+=> true
+
+// 'all' and 'any' interfaces can also take array parameter
+is.all.json([{}, {foo: 'bar'}]);
 => true
 ```
 
@@ -1814,6 +1871,19 @@ is.offline();
 
 is.not.offline();
 => true if current device is not offline
+```
+
+is.touchDevice()
+------------
+####Checks if current device supports touch.
+interface: not
+
+```javascript
+is.touchDevice();
+=> true if current device supports touch
+
+is.not.touchDevice();
+=> true if current device doesn't support touch
 ```
 
 Time checks
